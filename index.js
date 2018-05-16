@@ -2,6 +2,7 @@ import inquirer from 'inquirer'
 import { createStore } from 'redux'
 
 import gameReducer, { move } from './game'
+import AI from './game/ai'
 
 // Create the store
 const game = createStore(gameReducer)
@@ -31,7 +32,7 @@ const getInput = player => async () => {
 const gameWon = () => {
   const { winner } = game.getState()
   if (winner) {
-    process.stdout.write(`The winner is ${winner}`)
+    process.stdout.write(`The winner is ${winner}\n`)
     process.exit(0)
   }
 }
@@ -43,13 +44,22 @@ const err = () => {
   }
 }
 
+const ai = turn => () => {
+  const state = game.getState()
+  if (state.turn !== turn) return
+  if (state.winner) return
+  const move = AI(game.getState())
+  process.stdout.write(`\n\n${turn} moves to $\n\n`)
+  game.dispatch(move)
+}
+
 // Debug: Print the state
 // game.subscribe(() => console.log(game.getState()))
 
 game.subscribe(err)
 game.subscribe(printBoard)
 game.subscribe(getInput('X'))
-game.subscribe(getInput('O'))
+game.subscribe(ai('O'))
 game.subscribe(gameWon)
 
 // We dispatch a dummy START action to call all our

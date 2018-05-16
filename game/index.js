@@ -11,7 +11,7 @@ const streak = (board, firstCoord, ...restCoord) => {
 
 const winner = (board) => {
   // rows && cols
-  let i = 2
+  let i = 3
   while (i >= 0) {
     const row = streak(board, [0, i], [1, i], [2, i])
     if (row) return row
@@ -55,8 +55,8 @@ export const bad = (state, action) => {
   if (action.turn !== state.turn) return `It's not ${action.turn}'s turn`
   if (action.position.length !== 2) return `Please enter your row, column.`
   const [row, col] = action.position
-  if (!Number(row) || row < 0 || row > 2) return `Invalid row input (must be 0-2): ${row}`
-  if (!Number(col) || col < 0 || col > 2) return `Invalid column input (must be 0-2): ${col}`
+  if (Number.isNaN(row) || row < 0 || row > 2) return `Invalid row input (must be 0-2): ${row}`
+  if (Number.isNaN(col) || col < 0 || col > 2) return `Invalid column input (must be 0-2): ${col}`
   if (state.board.hasIn(action.position)) return `${action.position} is already taken`
 }
 
